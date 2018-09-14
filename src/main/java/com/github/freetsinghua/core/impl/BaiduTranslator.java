@@ -7,6 +7,7 @@ import com.github.freetsinghua.core.io.util.StringUtils;
 import com.github.freetsinghua.util.CollectionUtils;
 import com.github.freetsinghua.util.LanguageUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -52,7 +53,7 @@ public final class BaiduTranslator extends AbstractTranslator {
                 new UrlEncodedFormEntity(CollectionUtils.map2list(requestProperties), "UTF-8"));
         request.setHeader(
                 "Cookie",
-                "BAIDUID=15181292E1C73B915445F0A5AB2C3A1B:FG=1; BIDUPSID=15181292E1C73B915445F0A5AB2C3A1B; PSTM=1532674894; REALTIME_TRANS_SWITCH=1; FANYI_WORD_SWITCH=1; HISTORY_SWITCH=1; SOUND_SPD_SWITCH=1; SOUND_PREFER_SWITCH=1; PSINO=3; H_PS_PSSID=1450_21126_22159; locale=zh; Hm_lvt_64ecd82404c51e03dc91cb9e8c025574=1534325906,1536116513,1536117539,1536807962; Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574=1536807962; to_lang_often=%5B%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%2C%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%5D; from_lang_often=%5B%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%2C%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%5D");
+                "BAIDUID=15181292E1C73B915445F0A5AB2C3A1B:FG=1; BIDUPSID=15181292E1C73B915445F0A5AB2C3A1B; PSTM=1532674894; REALTIME_TRANS_SWITCH=1; FANYI_WORD_SWITCH=1; HISTORY_SWITCH=1; SOUND_SPD_SWITCH=1; SOUND_PREFER_SWITCH=1; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; DOUBLE_LANG_SWITCH=1; from_lang_often=%5B%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%2C%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%5D; locale=zh; H_PS_PSSID=1450_21126_22159; PSINO=5; Hm_lvt_64ecd82404c51e03dc91cb9e8c025574=1536807962,1536832635,1536832785,1536887993; Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574=1536887993; to_lang_often=%5B%7B%22value%22%3A%22th%22%2C%22text%22%3A%22%u6CF0%u8BED%22%7D%2C%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%2C%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%5D");
         request.setHeader(
                 "User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
