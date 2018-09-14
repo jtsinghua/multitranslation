@@ -13,12 +13,9 @@
 ### 各翻译工具所支持的语言，在资源路径下config下面的xml文件中配置，通过LanguageUtils来解析
 
 ###Example
-  <code>
+  
     Translations translations = new Translations(new YouDaoTranslator());
-    
     String result = translations.traslate("中文", "英语", "我恨你");
-    
     System.out.println(result);
-  </code>
 
  
