@@ -31,13 +31,25 @@ public final class GoogleTranslator extends AbstractTranslator {
 
     public GoogleTranslator() {
         super(url);
+        LanguageUtils.init("google");
     }
 
     @Override
-    public void setFormData(String from, String to, String text) {
+    public void setProperty(String from, String to, String text) {
+
+        String fromLanguage = LanguageUtils.getLanguageShort(from);
+        if (StringUtils.isEmpty(fromLanguage)) {
+            throw new IllegalStateException("不支持的语言: [" + from + "]");
+        }
+
+        String toLanguage = LanguageUtils.getLanguageShort(to);
+        if (StringUtils.isEmpty(toLanguage)) {
+            throw new IllegalStateException("不支持的语言：[" + to + "]");
+        }
+
         requestProperties.add("client", "t");
-        requestProperties.add("sl", LanguageUtils.getLanguageShort(from));
-        requestProperties.add("tl", LanguageUtils.getLanguageShort(to));
+        requestProperties.add("sl", fromLanguage);
+        requestProperties.add("tl", toLanguage);
         requestProperties.add("hl", "zh-CN");
         requestProperties.add("dt", "at");
         requestProperties.add("dt", "bd");

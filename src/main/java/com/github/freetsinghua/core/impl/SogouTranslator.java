@@ -14,7 +14,6 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
@@ -24,12 +23,24 @@ public final class SogouTranslator extends AbstractTranslator {
 
     public SogouTranslator() {
         super(url);
+        LanguageUtils.init("sogou");
     }
 
     @Override
-    public void setFormData(String from, String to, String text) {
-        requestProperties.add("from", LanguageUtils.getLanguageShort(from));
-        requestProperties.add("to", LanguageUtils.getLanguageShort(to));
+    public void setProperty(String from, String to, String text) {
+
+        String fromLanguage = LanguageUtils.getLanguageShort(from);
+        if (StringUtils.isEmpty(fromLanguage)) {
+            throw new IllegalStateException("不支持的语言: [" + from + "]");
+        }
+
+        String toLanguage = LanguageUtils.getLanguageShort(to);
+        if (StringUtils.isEmpty(toLanguage)) {
+            throw new IllegalStateException("不支持的语言：[" + to + "]");
+        }
+
+        requestProperties.add("from", fromLanguage);
+        requestProperties.add("to", toLanguage);
         requestProperties.add("client", "pc");
         requestProperties.add("fr", "browser_pc");
         requestProperties.add("text", text);
@@ -51,6 +62,14 @@ public final class SogouTranslator extends AbstractTranslator {
     @Override
     public String query() throws Exception {
         HttpPost request = new HttpPost(StringUtils.getUrlWithQueryString(url, requestProperties));
+
+        request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        request.setHeader(
+                "Cookie",
+                "IPLOC=CN5301; SUID=6C96DDDE5218910A000000005B7BB18C; SUV=1534833035732077; sct=6; ld=zkllllllll2bWEpGlllllVmv4UwlllllTHLQblllllGlllllxZlll5@@@@@@@@@@; LSTMV=219%2C188; LCLKINT=2208; ABTEST=0|1536890877|v17; SELECTION_SWITCH=1; HISTORY_SWITCH=1; MTRAN_ABTEST=0; SNUID=2EB6D6D40A0F7EC141E838000BC2222F");
+        request.setHeader(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
 
         CloseableHttpResponse httpResponse = httpClient.execute(request);
         HttpEntity httpEntity = httpResponse.getEntity();

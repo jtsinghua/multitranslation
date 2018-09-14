@@ -6,8 +6,8 @@ import com.github.freetsinghua.core.io.ClassPathResource;
 import com.github.freetsinghua.core.io.util.StringUtils;
 import com.github.freetsinghua.util.CollectionUtils;
 import com.github.freetsinghua.util.LanguageUtils;
+import com.sun.javafx.sg.prism.web.NGWebView;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -26,12 +26,24 @@ public final class BaiduTranslator extends AbstractTranslator {
 
     public BaiduTranslator() {
         super(url);
+        LanguageUtils.init("baidu");
     }
 
     @Override
-    public void setFormData(String from, String to, String text) {
-        requestProperties.add("from", LanguageUtils.getLanguageShort(from));
-        requestProperties.add("to", LanguageUtils.getLanguageShort(to));
+    public void setProperty(String from, String to, String text) {
+
+        String fromLanguage = LanguageUtils.getLanguageShort(from);
+        if (StringUtils.isEmpty(fromLanguage)) {
+            throw new IllegalStateException("不支持的语言: [" + from + "]");
+        }
+
+        String toLanguage = LanguageUtils.getLanguageShort(to);
+        if (StringUtils.isEmpty(toLanguage)) {
+            throw new IllegalStateException("不支持的语言：[" + to + "]");
+        }
+
+        requestProperties.add("from", fromLanguage);
+        requestProperties.add("to", toLanguage);
         requestProperties.add("query", text);
         requestProperties.add("transtype", "translang");
         requestProperties.add("simple_means_flag", "3");
