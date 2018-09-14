@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static javax.swing.text.html.HTML.Attribute.LANG;
-
 public final class BaiduTranslator extends AbstractTranslator {
     private static final String url = "https://fanyi.baidu.com/v2transapi";
 
@@ -40,11 +38,18 @@ public final class BaiduTranslator extends AbstractTranslator {
         requestProperties.add("token", "bfcf0d72a412c0efc3fed45b98d9acdf");
     }
 
+    /**
+     * 网络查询
+     *
+     * @return 返回查询结果
+     * @throws Exception 如果出现错误
+     */
     @Override
     public String query() throws Exception {
         HttpPost request = new HttpPost(url);
 
-        request.setEntity(new UrlEncodedFormEntity(CollectionUtils.map2list(requestProperties), "UTF-8"));
+        request.setEntity(
+                new UrlEncodedFormEntity(CollectionUtils.map2list(requestProperties), "UTF-8"));
         request.setHeader(
                 "Cookie",
                 "BAIDUID=15181292E1C73B915445F0A5AB2C3A1B:FG=1; BIDUPSID=15181292E1C73B915445F0A5AB2C3A1B; PSTM=1532674894; REALTIME_TRANS_SWITCH=1; FANYI_WORD_SWITCH=1; HISTORY_SWITCH=1; SOUND_SPD_SWITCH=1; SOUND_PREFER_SWITCH=1; PSINO=3; H_PS_PSSID=1450_21126_22159; locale=zh; Hm_lvt_64ecd82404c51e03dc91cb9e8c025574=1534325906,1536116513,1536117539,1536807962; Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574=1536807962; to_lang_often=%5B%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%2C%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%5D; from_lang_often=%5B%7B%22value%22%3A%22en%22%2C%22text%22%3A%22%u82F1%u8BED%22%7D%2C%7B%22value%22%3A%22zh%22%2C%22text%22%3A%22%u4E2D%u6587%22%7D%5D");
@@ -53,8 +58,6 @@ public final class BaiduTranslator extends AbstractTranslator {
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
 
         request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-        System.out.println(request.getURI());
 
         CloseableHttpResponse response = httpClient.execute(request);
         HttpEntity entity = response.getEntity();
@@ -68,18 +71,33 @@ public final class BaiduTranslator extends AbstractTranslator {
         return result;
     }
 
+    /**
+     * 解析返回结果，获取翻译结果
+     *
+     * @param text 返回的字符串，一般是json字符串
+     * @return 返回翻译结果
+     * @throws IOException 若是读取错误
+     * @throws IllegalStateException 若是返回的字符串为空
+     */
     @Override
-    public String parses(String text) throws IOException {
+    public String parses(String text) throws IOException, IllegalStateException {
         System.out.println(text);
 
         if (StringUtils.isEmpty(text)) {
-            new IllegalStateException("the result is empty!!");
+            throw new IllegalStateException("the result is empty!!");
         }
 
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(text).path("trans_result").findPath("dst").toString();
     }
 
+    /**
+     * 获取token字段值
+     *
+     * @param text 要翻译的文本
+     * @param gtk 固定字符串
+     * @return 返回token
+     */
     private String token(String text, String gtk) {
         String result = "";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
